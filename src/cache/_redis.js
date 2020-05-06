@@ -32,7 +32,27 @@ function set(key, val, timeout = 60*60) {
  * @param {string} key 键 
  */
 function get(key) {
+    const promise = new Promise((resolve, reject) => {
+        redisClient.get(key, (err, val) => {
+            if (err) {
+                reject(err)
+                return
+            }
+            if (val == null) {
+                resolve(null)
+                return 
+            }
 
+            try {
+                resolve(
+                    JSON.parse(val)
+                )
+            } catch (ex) {
+                resolve(val)
+            }
+        })
+    })
+    return promise;
 }
 
 module.exports = {
